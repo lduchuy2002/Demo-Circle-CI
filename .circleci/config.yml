@@ -1,4 +1,19 @@
 version: 2.1
+
+executors:
+  node:
+    docker:
+      - image: circleci/node:14.17.4
+  node_test:
+    docker:
+      - image: circleci/node:14.17.4
+        environment:
+          TZ: "Asia/Saigon"
+
+  java-node:
+    docker:
+      - image: cimg/node:14.15.0-browsers
+
 jobs:
   run_tests:
     docker:
@@ -7,9 +22,24 @@ jobs:
       - checkout
       - run: 
           name: Install deps
-          command: |
-            yarn install
+          command: yarn install
 workflow:
   build_test:
     jobs:
-      - yarn build
+      DeployDEV:
+        jobs:
+          - build_and_test:
+            filters:
+              branches:
+                only:
+                  - main
+          
+          - deploy:
+            name: DeployDev
+            deploy_env: dev
+            requires:
+              - build_and_test
+            filters:
+              branches:
+                only:
+                  - main
