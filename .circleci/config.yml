@@ -1,0 +1,15 @@
+version: 2.1
+jobs:
+  run_tests:
+    docker:
+      - image: circleci/node:16
+    steps:
+      - checkout
+       -run: 
+          name: Install deps
+          command: |
+            yarn install
+workflow:
+  build_test:
+    jobs:
+      - yarn build
